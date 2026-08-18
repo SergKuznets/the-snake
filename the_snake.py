@@ -91,9 +91,10 @@ class Apple(GameObject):
         # Вызываем метод случайное положение яблока и передаем в него аргумент.
         self.randomize_position(occupied_positions)
 
-    def randomize_position(self, occupied_positions=[]):
+    def randomize_position(self, occupied_positions=None):
         """Метод задает случайное положение яблока."""
-        self.occupied_positions = occupied_positions
+        if occupied_positions is None:
+            occupied_positions = []
         while True:
             self.position = (
                 randint(0, GRID_WIDTH - 1) * GRID_SIZE,
