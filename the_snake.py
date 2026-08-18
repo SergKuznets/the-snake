@@ -83,7 +83,9 @@ class Apple(GameObject):
     """Объявление дочернего класса. Яблоко."""
 
     # Инициализация заданной позиции яблока на поле и цвет.
-    def __init__(self, occupied_positions=[], body_color=APPLE_COLOR):
+    def __init__(self, occupied_positions=None, body_color=APPLE_COLOR):
+        if occupied_positions is None:
+            occupied_positions = []
         # Унаследование атрибутов с основного класса GameObject
         super().__init__(body_color)
         # Вызываем метод случайное положение яблока и передаем в него аргумент.
