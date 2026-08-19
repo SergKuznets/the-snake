@@ -66,7 +66,9 @@ class GameObject:
 
     def draw(self):
         """Объявляем пустой метод отрисовка, который перенаследуется дальше."""
-        raise NotImplementedError
+        raise NotImplementedError(
+            f'Метод draw переопределяется в дочерних классах'
+            f'базового класса {self.__class__.__name__}')
 
     def draw_rect(self, position, body_color=BORDER_COLOR):
         """Метод создание прямоугольника"""
@@ -84,17 +86,13 @@ class Apple(GameObject):
 
     # Инициализация заданной позиции яблока на поле и цвет.
     def __init__(self, occupied_positions=None, body_color=APPLE_COLOR):
-        if occupied_positions is None:
-            occupied_positions = []
         # Унаследование атрибутов с основного класса GameObject
         super().__init__(body_color)
         # Вызываем метод случайное положение яблока и передаем в него аргумент.
-        self.randomize_position(occupied_positions)
+        self.randomize_position(occupied_positions or [])
 
-    def randomize_position(self, occupied_positions=None):
+    def randomize_position(self, occupied_positions):
         """Метод задает случайное положение яблока."""
-        if occupied_positions is None:
-            occupied_positions = []
         while True:
             self.position = (
                 randint(0, GRID_WIDTH - 1) * GRID_SIZE,
@@ -116,6 +114,7 @@ class Snake(GameObject):
         # Унаследование атрибутов с основного класса GameObject
         super().__init__(body_color)
         self.reset()
+        self.direction = RIGHT
 
     def get_head_position(self):
         """Метод возвращает координаты головы змейки."""
@@ -124,13 +123,13 @@ class Snake(GameObject):
     def move(self):
         """Метод движения змейки."""
         # Получаем текущую позицию головы змейки.
-        head = self.get_head_position()
-        # Распакуем координаты в переменные x и y.
-        x, y = head
+        head_x, head_y = self.get_head_position()
+        # Распакуем направление на 2 переменные.
+        dx, dy = self.direction
         # Вычисляем новую позицию головы змейки.
         self.position = (
-            (x + self.direction[0] * GRID_SIZE) % SCREEN_WIDTH,
-            (y + self.direction[1] * GRID_SIZE) % SCREEN_HEIGHT
+            (head_x + dx * GRID_SIZE) % SCREEN_WIDTH,
+            (head_y + dy * GRID_SIZE) % SCREEN_HEIGHT
         )
         # Добавляем новую голову в начало списка.
         self.positions.insert(0, self.position)
@@ -207,7 +206,7 @@ def main():
             snake.length += 1
             apple.randomize_position(snake.positions)
         # Сравниваем координаты головы с остальными сегментами списка.
-        elif snake.get_head_position() in snake.positions[1:]:
+        elif snake.get_head_position() in snake.positions[4:]:
             snake.reset()
             screen.fill(BOARD_BACKGROUND_COLOR)
             apple.randomize_position(snake.positions)
